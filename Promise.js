@@ -40,12 +40,6 @@ function MyPromise(callback) {
 
   callback(resolve, rejected);
 
-  // if(status === statusMap.RESOLVED) {
-  //   typeof callback === 'function' && callback(result);
-  // }
-  // if(status === statusMap.REJECTED) {
-  //   typeof callback === 'function' && callback(result);
-  // }
 }
 
 MyPromise.prototype.then = function(callback) {
