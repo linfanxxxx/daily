@@ -1,65 +1,43 @@
-let p1 = new Promise((resolve, reject) => {
-  setTimeout(()=> {
-    console.log('p1 run');
-    resolve('p1 result');
-  },1000);
-});
-
-
-p1.then(res=>{
-  console.log(res);
-});
 
 const statusMap = {
   PENDING: 'pending',
   RESOLVED: 'resolved',
   REJECTED: 'rejected',
 }
-
-function MyPromise(callback) {
-  this.status = statusMap.PENDING;
-  this.result = '';
-  let resolveCbList = [];
-  let rejectCbList = [];
-  this.resolveCbList = resolveCbList;
-  this.rejectCbList = rejectCbList;
-  let resolve = function (res) {
-    status = statusMap.RESOLVED;
-    result = res;
-    resolveCbList.forEach(cb => {
-      typeof cb === 'function' && cb(this.result);
-    })
+class MyPromise { 
+  constructor(callback) {
+    this.result = '';
+    this.status = statusMap.PENDING;
+    this.resList = [];
+    this.rejList = [];
+    typeof callback === 'function' && callback(this.resolve.bind(this), this.reject.bind(this));
   }
-  let rejected = function (err) {
-    status = statusMap.REJECTED;
-    result = err;
-    rejectCbList.forEach(cb => {
-      typeof cb === 'function' && cb(this.result);
-    })
+  then(callback) {
+    if (this.status === statusMap.RESOLVED) {
+      typeof callback === 'function' && callback(this.result);
+    } else {
+      this.resList.push(callback);
+    }
   }
-
-  callback(resolve, rejected);
-
-}
-
-MyPromise.prototype.then = function(callback) {
-  if(this.status === statusMap.RESOLVED) {
-    typeof callback === 'function' && callback(this.result);
-  } else {
-    console.log('myPromise then', callback);
-    this.resolveCbList.push(callback);
-    console.log('resolveCbList', this.resolveCbList);
+  resolve(res) {
+    this.status = statusMap.RESOLVED;
+    this.result = res;
+    this.resList.forEach(item => typeof item === 'function' && item(res)); 
+  }
+  reject(res) {
+    this.status = statusMap.REJECTED;
+    this.result = res;
+    this.rejList.forEach(item => typeof item === 'function' && item(res)); 
   }
 }
 
-let p2 = new MyPromise((resolve, reject) => {
-  setTimeout(()=> {
-    console.log('p2 run');
-    resolve('p2 result');
-  },1000);
+let p = new MyPromise((resolve, reject) => {
+  setTimeout(()=>{
+    console.log('promise3 init');
+    resolve('this is result p');
+  },1000)
 });
 
-
-p2.then(res=>{
-  console.log(res);
-});
+p.then((res)=>{
+  console.log('promise3 run :' + res);
+})
