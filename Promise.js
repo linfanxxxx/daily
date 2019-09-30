@@ -27,23 +27,10 @@ class MyPromise {
       if (typeof item !== 'function') {
         console.log('callback should be a Function');
       } else {
-        const result = item(res);
-        console.log('resolve', result);
+        const result = item(this.result);
         this.result = result;
       }
     });
-
-    // this.resList.forEach(item => {
-    //   if (typeof item !== 'function') {
-    //     console.log('callback should be a Function');
-    //   } else {
-    //     const result = item(res);
-    //     this.result = result;
-    //     return new MyPromise((resolve, reject) => {
-    //       resolve(result);
-    //     })
-    //   }
-    // })
   }
   reject(res) {
     this.status = statusMap.REJECTED;
@@ -55,13 +42,18 @@ class MyPromise {
 let p = new MyPromise((resolve, reject) => {
   setTimeout(()=>{
     console.log('promise init');
-    resolve('初始化的结果');
+    resolve('init result');
   },1000)
 });
 
 p.then((res)=>{
-  console.log('初始化结果:' + res);
-  return '链式调用后的结果';
+  console.log('1 初始化结果:' + res);
+  return 'new result';
 }).then((res)=> {
-  console.log('链式调用后的结果:' + res);
+  console.log('2 链式调用后的结果:' + res);
+  return 'result3';
+})
+
+p.then((res)=>{
+  console.log('3 第三次调用的结果:' + res);
 })
